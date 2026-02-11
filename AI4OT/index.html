@@ -51,7 +51,8 @@
 
   /* ─── LinkedIn Ad Card ─── */
   .linkedin-ad {
-    width: 1200px;
+    width: 100%;
+    max-width: 1200px;
     background: var(--bg-deep);
     border-radius: 16px;
     overflow: hidden;
@@ -61,8 +62,8 @@
 
   /* ─── Ad Image Area (1200x628) ─── */
   .ad-image {
-    width: 1200px;
-    height: 628px;
+    width: 100%;
+    aspect-ratio: 1200 / 628;
     position: relative;
     overflow: hidden;
     background: linear-gradient(160deg, #09090b 0%, #1a1025 35%, #0f0a1a 70%, #09090b 100%);
@@ -105,8 +106,8 @@
     z-index: 2;
     display: flex;
     height: 100%;
-    padding: 56px 64px;
-    gap: 50px;
+    padding: clamp(24px, 4.7vw, 56px) clamp(24px, 5.3vw, 64px);
+    gap: clamp(20px, 4.2vw, 50px);
   }
 
   .ad-left {
@@ -163,10 +164,10 @@
   }
 
   .ad-headline {
-    font-size: 39px;
+    font-size: clamp(22px, 3.25vw, 39px);
     font-weight: 800;
     line-height: 1.15;
-    margin-bottom: 18px;
+    margin-bottom: clamp(12px, 1.5vw, 18px);
     color: var(--text-primary);
     letter-spacing: -0.5px;
   }
@@ -178,10 +179,10 @@
   }
 
   .ad-subtext {
-    font-size: 17px;
+    font-size: clamp(13px, 1.4vw, 17px);
     line-height: 1.65;
     color: var(--text-secondary);
-    margin-bottom: 32px;
+    margin-bottom: clamp(20px, 2.6vw, 32px);
     max-width: 460px;
   }
 
@@ -191,9 +192,9 @@
     gap: 8px;
     background: linear-gradient(135deg, var(--accent-violet), #7c3aed);
     color: white;
-    font-size: 15px;
+    font-size: clamp(12px, 1.25vw, 15px);
     font-weight: 700;
-    padding: 14px 30px;
+    padding: clamp(10px, 1.2vw, 14px) clamp(20px, 2.5vw, 30px);
     border-radius: 10px;
     text-decoration: none;
     letter-spacing: 0.3px;
@@ -231,11 +232,11 @@
   .wf-step {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: clamp(8px, 1vw, 12px);
     background: var(--bg-card);
     border: 1px solid var(--border-light);
     border-radius: 10px;
-    padding: 12px 20px;
+    padding: clamp(8px, 1vw, 12px) clamp(12px, 1.6vw, 20px);
     width: 100%;
     max-width: 340px;
     transition: border-color 0.2s;
@@ -257,13 +258,13 @@
     flex: 1;
   }
   .wf-text .wf-title {
-    font-size: 13px;
+    font-size: clamp(11px, 1.1vw, 13px);
     font-weight: 700;
     color: var(--text-primary);
   }
   .wf-text .wf-desc {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-size: clamp(8px, 0.85vw, 10px);
     color: var(--text-muted);
     margin-top: 2px;
   }
@@ -272,13 +273,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 28px;
+    height: clamp(16px, 2.3vw, 28px);
     color: var(--text-muted);
     font-size: 14px;
   }
   .wf-arrow svg {
-    width: 16px;
-    height: 16px;
+    width: clamp(12px, 1.3vw, 16px);
+    height: clamp(12px, 1.3vw, 16px);
     opacity: 0.4;
   }
 
@@ -294,7 +295,7 @@
 
   /* ─── Pain Points Panel (below image) ─── */
   .pain-section {
-    padding: 40px 50px;
+    padding: clamp(24px, 3.3vw, 40px) clamp(24px, 4.2vw, 50px);
     border-top: 1px solid var(--border);
   }
   .pain-section h3 {
@@ -364,7 +365,7 @@
 
   /* ─── Ad Copy Section ─── */
   .ad-copy-section {
-    padding: 40px 50px;
+    padding: clamp(24px, 3.3vw, 40px) clamp(24px, 4.2vw, 50px);
     border-top: 1px solid var(--border);
   }
   .ad-copy-section h3 {
@@ -381,7 +382,7 @@
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 28px 32px;
+    padding: clamp(18px, 2.3vw, 28px) clamp(20px, 2.6vw, 32px);
     max-width: 860px;
   }
   .copy-card .label {
@@ -428,7 +429,7 @@
 
   /* ─── Contact Section ─── */
   .contact-section {
-    padding: 32px 50px;
+    padding: clamp(20px, 2.6vw, 32px) clamp(24px, 4.2vw, 50px);
     border-top: 1px solid var(--border);
     background: rgba(139, 92, 246, 0.02);
   }
@@ -444,6 +445,86 @@
   .contact-section .ad-cta svg {
     width: 18px;
     height: 18px;
+  }
+
+  /* ─── Responsive Breakpoints ─── */
+  @media (max-width: 900px) {
+    .ad-image {
+      aspect-ratio: auto;
+      height: auto;
+    }
+    .ad-content {
+      flex-direction: column;
+      padding: 32px 28px;
+      gap: 32px;
+    }
+    .ad-left, .ad-right {
+      flex: none;
+    }
+    .workflow-container {
+      max-width: 100%;
+    }
+    .wf-step {
+      max-width: 100%;
+    }
+    .pain-grid {
+      grid-template-columns: 1fr;
+    }
+    .tech-badges {
+      gap: 6px;
+    }
+    .tech-badge {
+      font-size: 9.5px;
+      padding: 4px 10px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    body {
+      padding: 16px 8px;
+    }
+    .linkedin-ad {
+      border-radius: 10px;
+    }
+    .ad-content {
+      padding: 24px 18px;
+      gap: 24px;
+    }
+    .ad-headline {
+      font-size: 22px;
+    }
+    .ad-subtext {
+      font-size: 13px;
+    }
+    .wf-icon {
+      width: 28px;
+      height: 28px;
+      font-size: 13px;
+    }
+    .pain-card {
+      padding: 14px;
+    }
+    .pain-card-icon {
+      width: 32px;
+      height: 32px;
+      font-size: 14px;
+    }
+    .pain-card h4 {
+      font-size: 13px;
+    }
+    .pain-card p {
+      font-size: 11.5px;
+    }
+    .copy-card .text {
+      font-size: 13px;
+    }
+    .hashtags {
+      gap: 6px;
+    }
+    .hashtag {
+      font-size: 10px;
+      padding: 3px 8px;
+    }
   }
 </style>
 </head>
