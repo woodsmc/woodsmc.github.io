@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Code Sandbox — Safe Execution for Critical Infrastructure</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #09090b;
+    --bg-card: #18181b;
+    --bg-surface: #27272a;
+    --accent-violet: #8b5cf6;
+    --accent-violet-dim: rgba(139, 92, 246, 0.12);
+    --accent-emerald: #34d399;
+    --accent-emerald-dim: rgba(52, 211, 153, 0.12);
+    --accent-orange: #fb923c;
+    --accent-orange-dim: rgba(251, 146, 60, 0.12);
+    --accent-rose: #fb7185;
+    --accent-rose-dim: rgba(251, 113, 133, 0.12);
+    --accent-sky: #38bdf8;
+    --accent-sky-dim: rgba(56, 189, 248, 0.12);
+    --text-primary: #fafafa;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
+    --border: #27272a;
+    --border-light: #3f3f46;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0c0a14;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+    color: var(--text-primary);
+  }
+
+  .page-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+  }
+
+  /* ─── LinkedIn Ad Card ─── */
+  .linkedin-ad {
+    width: 1200px;
+    background: var(--bg-deep);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.6);
+    border: 1px solid var(--border);
+  }
+
+  /* ─── Ad Image Area (1200x628) ─── */
+  .ad-image {
+    width: 1200px;
+    height: 628px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, #09090b 0%, #1a1025 35%, #0f0a1a 70%, #09090b 100%);
+  }
+
+  /* Dot grid pattern — dev tool aesthetic */
+  .ad-image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(139, 92, 246, 0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+    z-index: 1;
+  }
+
+  .glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    z-index: 0;
+  }
+  .glow-orb.violet {
+    width: 500px; height: 500px;
+    background: rgba(139, 92, 246, 0.1);
+    top: -150px; right: -100px;
+  }
+  .glow-orb.emerald {
+    width: 350px; height: 350px;
+    background: rgba(52, 211, 153, 0.06);
+    bottom: -100px; left: 50px;
+  }
+  .glow-orb.orange {
+    width: 200px; height: 200px;
+    background: rgba(251, 146, 60, 0.05);
+    top: 250px; left: 450px;
+  }
+
+  .ad-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    height: 100%;
+    padding: 56px 64px;
+    gap: 50px;
+  }
+
+  .ad-left {
+    flex: 1.15;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .ad-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  /* Tech badges */
+  .tech-badges {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .tech-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.8px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid;
+  }
+  .tech-badge.violet {
+    color: var(--accent-violet);
+    border-color: rgba(139, 92, 246, 0.25);
+    background: rgba(139, 92, 246, 0.06);
+  }
+  .tech-badge.emerald {
+    color: var(--accent-emerald);
+    border-color: rgba(52, 211, 153, 0.25);
+    background: rgba(52, 211, 153, 0.06);
+  }
+  .tech-badge.orange {
+    color: var(--accent-orange);
+    border-color: rgba(251, 146, 60, 0.25);
+    background: rgba(251, 146, 60, 0.06);
+  }
+  .tech-badge.sky {
+    color: var(--accent-sky);
+    border-color: rgba(56, 189, 248, 0.25);
+    background: rgba(56, 189, 248, 0.06);
+  }
+
+  .ad-headline {
+    font-size: 39px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 18px;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+  .ad-headline .highlight {
+    background: linear-gradient(135deg, var(--accent-violet), var(--accent-emerald));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .ad-subtext {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    max-width: 460px;
+  }
+
+  .ad-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--accent-violet), #7c3aed);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 14px 30px;
+    border-radius: 10px;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.25);
+  }
+  .ad-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 35px rgba(139, 92, 246, 0.4);
+  }
+
+  /* ─── Workflow Diagram ─── */
+  .workflow-container {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .workflow-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .workflow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .wf-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 12px 20px;
+    width: 100%;
+    max-width: 340px;
+    transition: border-color 0.2s;
+  }
+  .wf-step:hover { border-color: rgba(139, 92, 246, 0.4); }
+
+  .wf-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+
+  .wf-text {
+    flex: 1;
+  }
+  .wf-text .wf-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .wf-text .wf-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .wf-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .wf-arrow svg {
+    width: 16px;
+    height: 16px;
+    opacity: 0.4;
+  }
+
+  /* Sandbox step highlight */
+  .wf-step.sandbox {
+    border-color: rgba(52, 211, 153, 0.4);
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.04), rgba(139, 92, 246, 0.04));
+    box-shadow: 0 0 20px rgba(52, 211, 153, 0.06);
+  }
+  .wf-step.sandbox .wf-title {
+    color: var(--accent-emerald);
+  }
+
+  /* ─── Pain Points Panel (below image) ─── */
+  .pain-section {
+    padding: 40px 50px;
+    border-top: 1px solid var(--border);
+  }
+  .pain-section h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pain-section h3::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-rose);
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .pain-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .pain-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .pain-card:hover { border-color: var(--border-light); }
+
+  .pain-card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+
+  .pain-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .pain-card p {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ─── Ad Copy Section ─── */
+  .ad-copy-section {
+    padding: 40px 50px;
+    border-top: 1px solid var(--border);
+  }
+  .ad-copy-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-violet);
+    margin-bottom: 20px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .copy-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    max-width: 860px;
+  }
+  .copy-card .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-emerald);
+    margin-bottom: 14px;
+  }
+  .copy-card .text {
+    font-size: 14.5px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+  .copy-card .text strong {
+    color: var(--text-primary);
+  }
+  .copy-card .text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: var(--accent-violet);
+  }
+
+  .hashtags {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .hashtag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-violet);
+    background: rgba(139, 92, 246, 0.06);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    padding: 4px 12px;
+    border-radius: 4px;
+  }
+
+  /* ─── Contact Section ─── */
+  .contact-section {
+    padding: 32px 50px;
+    border-top: 1px solid var(--border);
+    background: rgba(139, 92, 246, 0.02);
+  }
+  .contact-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-violet);
+    margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .contact-section .ad-cta svg {
+    width: 18px;
+    height: 18px;
+  }
+</style>
+</head>
+<body>
+
+
+<!-- ═══════ LINKEDIN AD CARD ═══════ -->
+<div class="linkedin-ad">
+
+  <!-- Ad Image (1200×628) -->
+  <div class="ad-image">
+    <div class="glow-orb violet"></div>
+    <div class="glow-orb emerald"></div>
+    <div class="glow-orb orange"></div>
+
+    <div class="ad-content">
+      <div class="ad-left">
+        <div class="tech-badges">
+          <span class="tech-badge violet">AI Agents</span>
+          <span class="tech-badge emerald">Sandboxed Execution</span>
+          <span class="tech-badge orange">On-Prem</span>
+          <span class="tech-badge sky">Critical Infra</span>
+        </div>
+
+        <h1 class="ad-headline">
+          Your AI Writes Code.<br>
+          <span class="highlight">Does It Run Safely<br>
+          on Critical Infra?</span>
+        </h1>
+
+        <p class="ad-subtext">
+          LLMs and AI agents are generating code that touches OT systems, APIs, and production tools. Before that code runs on critical infrastructure, it needs a safe place to execute first — on-prem, isolated, and verified.
+        </p>
+
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdC4I1RbBlGUdNpHQO5v1KPw5QiHXCP5pgN-NaHZSaRRmoUAQ/viewform" class="ad-cta">
+          Discover More →
+        </a>
+      </div>
+
+      <div class="ad-right">
+        <!-- Workflow Diagram -->
+        <div class="workflow-container">
+          <div class="workflow-label">Secure AI Execution Workflow</div>
+          <div class="workflow">
+
+            <div class="wf-step">
+              <div class="wf-icon" style="background:var(--accent-sky-dim);">👤</div>
+              <div class="wf-text">
+                <div class="wf-title">User</div>
+                <div class="wf-desc">prompt / intent</div>
+              </div>
+            </div>
+
+            <div class="wf-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+            <div class="wf-step">
+              <div class="wf-icon" style="background:var(--accent-violet-dim);">🤖</div>
+              <div class="wf-text">
+                <div class="wf-title">AI Agent / LLM</div>
+                <div class="wf-desc">generates code + tool calls</div>
+              </div>
+            </div>
+
+            <div class="wf-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+            <div class="wf-step">
+              <div class="wf-icon" style="background:var(--accent-orange-dim);">📝</div>
+              <div class="wf-text">
+                <div class="wf-title">Generated Code</div>
+                <div class="wf-desc">scripts, api calls, tool interactions</div>
+              </div>
+            </div>
+
+            <div class="wf-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+            <div class="wf-step sandbox">
+              <div class="wf-icon" style="background:var(--accent-emerald-dim);">🛡️</div>
+              <div class="wf-text">
+                <div class="wf-title">Sandbox Execute</div>
+                <div class="wf-desc">on-prem · isolated · verified</div>
+              </div>
+            </div>
+
+            <div class="wf-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+            <div class="wf-step">
+              <div class="wf-icon" style="background:var(--accent-violet-dim);">🤖</div>
+              <div class="wf-text">
+                <div class="wf-title">AI Validates Result</div>
+                <div class="wf-desc">safe output confirmed</div>
+              </div>
+            </div>
+
+            <div class="wf-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+            <div class="wf-step">
+              <div class="wf-icon" style="background:var(--accent-sky-dim);">✅</div>
+              <div class="wf-text">
+                <div class="wf-title">User Gets Safe Result</div>
+                <div class="wf-desc">deploy with confidence</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Pain Points ─── -->
+  <div class="pain-section">
+    <h3>Why This Matters Now</h3>
+    <div class="pain-grid">
+
+      <div class="pain-card">
+        <div class="pain-card-icon" style="background:var(--accent-rose-dim);">⚠️</div>
+        <div>
+          <h4>AI-Generated Code Is Untrusted</h4>
+          <p>LLMs hallucinate API calls, generate unsafe system commands, and produce code with subtle vulnerabilities. Running it directly on critical infra is reckless.</p>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-card-icon" style="background:var(--accent-orange-dim);">🔧</div>
+        <div>
+          <h4>Agents Interact with Live Tools</h4>
+          <p>AI agents don't just write code — they call APIs, interact with databases, and trigger workflows. A single bad tool call on production OT can cascade.</p>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-card-icon" style="background:var(--accent-violet-dim);">☁️</div>
+        <div>
+          <h4>Cloud Sandboxes Don't Cut It</h4>
+          <p>Critical infrastructure data and systems can't leave the perimeter. You need on-prem sandboxed execution — air-gapped, compliant, and under your control.</p>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-card-icon" style="background:var(--accent-emerald-dim);">🚀</div>
+        <div>
+          <h4>Speed vs. Safety Tradeoff</h4>
+          <p>AI promises velocity in development. But without a safe execution layer, every speed gain is a security risk on systems that power grids, plants, and cities.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── Ad Copy ─── -->
+  <div class="ad-copy-section">
+
+    <div class="copy-card">
+      <div class="text">
+        <strong>Your AI agent just wrote a script to query your SCADA system. Should you run it?</strong><br><br>
+        LLMs and AI agents are transforming how we build software — generating code, calling tools, and interacting with applications in real time. But when those systems touch critical infrastructure, the stakes aren't a 500 error. They're a grid outage, a plant shutdown, or a safety incident.<br><br>
+        The problem: AI-generated code is inherently untrusted. It hallucinates. It guesses at API schemas. It produces code that <em>looks</em> right but behaves unpredictably. And right now, most teams have no safe layer between <code>AI generates code</code> and <code>code runs on production</code>.<br><br>
+        <strong>The workflow should be: User → AI → Code → Sandbox Execute → AI Validates → User gets safe result.</strong><br><br>
+        An on-prem security sandbox makes this possible:<br><br>
+        → Execute AI-generated code in a fully isolated environment — on your infrastructure, behind your firewall<br>
+        → Validate tool calls, API interactions, and system commands before they touch production<br>
+        → Let AI agents iterate safely — write, run, observe, fix — without operational risk<br>
+        → Maintain data sovereignty and compliance with air-gapped, on-prem execution<br>
+        → Ship faster without choosing between AI velocity and infrastructure safety<br><br>
+        Cloud sandboxes can't handle critical infra workloads. Your data can't leave the perimeter. You need sandboxed execution that lives where your systems do.<br><br>
+        <strong>👉 Let's talk about bringing safe AI code execution to your infrastructure.</strong>
+      </div>
+    </div>
+
+    <div class="hashtags">
+      <span class="hashtag">#AIAgents</span>
+      <span class="hashtag">#LLM</span>
+      <span class="hashtag">#CodeExecution</span>
+      <span class="hashtag">#Sandbox</span>
+      <span class="hashtag">#DevSecOps</span>
+      <span class="hashtag">#CriticalInfrastructure</span>
+      <span class="hashtag">#OTSecurity</span>
+      <span class="hashtag">#OnPrem</span>
+      <span class="hashtag">#AIEngineering</span>
+      <span class="hashtag">#SoftwareArchitecture</span>
+      <span class="hashtag">#CyberSecurity</span>
+    </div>
+  </div>
+
+  <!-- ─── Contact Us ─── -->
+  <div class="contact-section">
+    <h3>📬 Let's have a quick chat</h3>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSdC4I1RbBlGUdNpHQO5v1KPw5QiHXCP5pgN-NaHZSaRRmoUAQ/viewform" class="ad-cta" style="display:inline-flex;text-decoration:none;">
+        Contact Us
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

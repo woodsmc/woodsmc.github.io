@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Critical Infrastructure Security — Sandbox Solution</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #0a0e17;
+    --bg-card: #111827;
+    --accent-red: #ef4444;
+    --accent-amber: #f59e0b;
+    --accent-cyan: #06b6d4;
+    --accent-green: #10b981;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border: #1e293b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a1a2e;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+    color: var(--text-primary);
+  }
+
+  .page-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+  }
+
+  /* ─── LinkedIn Ad Card ─── */
+  .linkedin-ad {
+    width: 1200px;
+    background: var(--bg-dark);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+    position: relative;
+  }
+
+  /* ─── Ad Image Area (1200x628 standard) ─── */
+  .ad-image {
+    width: 1200px;
+    height: 628px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0a0e17 0%, #111827 40%, #0f172a 100%);
+  }
+
+  .ad-image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(6, 182, 212, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(6, 182, 212, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 1;
+  }
+
+  .glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+  }
+  .glow-orb.red {
+    width: 400px; height: 400px;
+    background: rgba(239, 68, 68, 0.12);
+    top: -100px; right: -50px;
+  }
+  .glow-orb.cyan {
+    width: 300px; height: 300px;
+    background: rgba(6, 182, 212, 0.08);
+    bottom: -80px; left: 100px;
+  }
+  .glow-orb.amber {
+    width: 250px; height: 250px;
+    background: rgba(245, 158, 11, 0.06);
+    top: 200px; left: 500px;
+  }
+
+  .ad-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    height: 100%;
+    padding: 60px 70px;
+    gap: 60px;
+  }
+
+  .ad-left {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .ad-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Regulation badges */
+  .reg-badges {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .reg-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+  .reg-badge.red {
+    color: var(--accent-red);
+    border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.08);
+  }
+  .reg-badge.cyan {
+    color: var(--accent-cyan);
+    border-color: rgba(6, 182, 212, 0.3);
+    background: rgba(6, 182, 212, 0.08);
+  }
+  .reg-badge.amber {
+    color: var(--accent-amber);
+    border-color: rgba(245, 158, 11, 0.3);
+    background: rgba(245, 158, 11, 0.08);
+  }
+
+  .ad-headline {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+  }
+  .ad-headline .highlight {
+    color: var(--accent-red);
+  }
+
+  .ad-subtext {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 36px;
+    max-width: 480px;
+  }
+
+  .ad-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent-red);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 14px 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+  }
+  .ad-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(239, 68, 68, 0.3);
+  }
+
+  /* ─── Right Side: Threat Stats Panel ─── */
+  .threat-panel {
+    background: rgba(17, 24, 39, 0.7);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 420px;
+    backdrop-filter: blur(10px);
+  }
+
+  .threat-panel-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .threat-panel-title::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-red);
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .pain-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(30, 41, 59, 0.6);
+  }
+  .pain-point:last-child { border-bottom: none; }
+
+  .pain-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 15px;
+  }
+  .pain-icon.red { background: rgba(239, 68, 68, 0.12); }
+  .pain-icon.amber { background: rgba(245, 158, 11, 0.12); }
+  .pain-icon.cyan { background: rgba(6, 182, 212, 0.12); }
+  .pain-icon.green { background: rgba(16, 185, 129, 0.12); }
+
+  .pain-text h4 {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+  }
+  .pain-text p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* ─── Bottom Ad Copy Section ─── */
+  .ad-copy-section {
+    padding: 40px 50px;
+    border-top: 1px solid var(--border);
+  }
+  .ad-copy-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-cyan);
+    margin-bottom: 20px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .copy-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    max-width: 820px;
+  }
+  .copy-card .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-amber);
+    margin-bottom: 14px;
+  }
+  .copy-card .text {
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: var(--text-secondary);
+  }
+  .copy-card .text strong {
+    color: var(--text-primary);
+  }
+
+  .hashtags {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .hashtag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-cyan);
+    background: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    padding: 4px 12px;
+    border-radius: 4px;
+  }
+
+  /* ─── Contact Section ─── */
+  .contact-section {
+    padding: 32px 50px;
+    border-top: 1px solid var(--border);
+    background: rgba(6, 182, 212, 0.02);
+  }
+  .contact-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-cyan);
+    margin-bottom: 16px;
+    font-family: 'Space Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+
+<!-- ═══════ LINKEDIN AD CARD ═══════ -->
+<div class="linkedin-ad">
+
+  <!-- Ad Image (1200×628) -->
+  <div class="ad-image">
+    <div class="glow-orb red"></div>
+    <div class="glow-orb cyan"></div>
+    <div class="glow-orb amber"></div>
+
+    <div class="ad-content">
+      <div class="ad-left">
+        <div class="reg-badges">
+          <span class="reg-badge red">NIS2</span>
+          <span class="reg-badge cyan">CER Directive</span>
+          <span class="reg-badge amber">CIRCIA</span>
+          <span class="reg-badge red">CRA</span>
+          <span class="reg-badge cyan">DORA</span>
+        </div>
+
+        <h1 class="ad-headline">
+          Can You Run Your<br>
+          Applications <span class="highlight">Without<br>
+          Risking Critical<br>
+          Infrastructure?</span>
+        </h1>
+
+        <p class="ad-subtext">
+          NIS2 and CIRCIA demand resilience testing. Your production OT environment is off-limits. A security sandbox closes that gap — safely.
+        </p>
+
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdkTwx1VU5iEXTcNTWx3nXRQiTXl3-na1u7CdbX_aeef8Xfvw/viewform?usp=publish-editor" class="ad-cta">
+          Discover More →
+        </a>
+      </div>
+
+      <div class="ad-right">
+        <div class="threat-panel">
+          <div class="threat-panel-title">Pain Points in Critical Infra</div>
+
+          <div class="pain-point">
+            <div class="pain-icon red">⚠️</div>
+            <div class="pain-text">
+              <h4>Can't Test on Live Systems</h4>
+              <p>Production OT/SCADA systems are too critical to run penetration tests or patch validations against.</p>
+            </div>
+          </div>
+
+          <div class="pain-point">
+            <div class="pain-icon green">🔄</div>
+            <div class="pain-text">
+              <h4>Unprotected SDLC Lifecycle</h4>
+              <p>Development, testing, deployment, and operations all touch critical infra — each phase is an attack vector without isolated validation.</p>
+            </div>
+          </div>
+
+          <div class="pain-point">
+            <div class="pain-icon amber">📋</div>
+            <div class="pain-text">
+              <h4>Compliance Deadlines Approaching</h4>
+              <p>NIS2, CIRCIA, and CER mandate resilience testing and incident reporting — auditors want proof.</p>
+            </div>
+          </div>
+
+          <div class="pain-point">
+            <div class="pain-icon cyan">🔒</div>
+            <div class="pain-text">
+              <h4>OT/IT Convergence Risk</h4>
+              <p>Every new connection expands the attack surface. How do you validate segmentation without exposure?</p>
+            </div>
+          </div>
+
+          <div class="pain-point">
+            <div class="pain-icon red">🎯</div>
+            <div class="pain-text">
+              <h4>Talent Gap in OT Security</h4>
+              <p>Teams need safe environments to train on real-world attack scenarios without operational risk.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Ad Copy ─── -->
+  <div class="ad-copy-section">
+
+    <div class="copy-card">
+      <div class="text">
+        <strong>You can't pen-test on a live critical infrastructure. And you can't ship untested code to one either.</strong><br><br>
+        But NIS2, CIRCIA, and the CER Directive now <em>require</em> you to prove resilience. Your board is accountable. Your auditors want evidence. And your OT environment is not untouchable.<br><br>
+        That's the paradox of critical infrastructure security — every phase of your application lifecycle touches systems you can never afford to break. From development to testing to deployment to operations, a single uncaught vulnerability can cascade into real-world outages.<br><br>
+        <strong>A security sandbox changes the equation.</strong><br><br>
+        → Replicate your OT/SCADA environment in an isolated twin<br>
+        → Validate application changes across dev, test, and staging — before they hit production<br>
+        → Run attack simulations, patch validations, and compliance tests<br>
+        → Train your team on real-world threat scenarios — safely<br>
+        → Generate the audit evidence regulators demand<br><br>
+        Stop choosing between compliance and uptime. Protect critical infrastructure at every stage — development, testing, deployment, and operations.<br><br>
+        <strong>👉 Let's talk about how a sandbox approach closes the critical infra security gap.</strong>
+      </div>
+    </div>
+
+    <div class="hashtags">
+      <span class="hashtag">#CriticalInfrastructure</span>
+      <span class="hashtag">#OTSecurity</span>
+      <span class="hashtag">#NIS2</span>
+      <span class="hashtag">#CIRCIA</span>
+      <span class="hashtag">#CyberResilience</span>
+      <span class="hashtag">#ICS</span>
+      <span class="hashtag">#SCADA</span>
+      <span class="hashtag">#CyberSecurity</span>
+      <span class="hashtag">#InfrastructureSecurity</span>
+      <span class="hashtag">#SecuritySandbox</span>
+      <span class="hashtag">#DevSecOps</span>
+    </div>
+  </div>
+
+  <!-- ─── Contact Us ─── -->
+  <div class="contact-section">
+    <h3>📬 Let's have a quick chat</h3>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSdkTwx1VU5iEXTcNTWx3nXRQiTXl3-na1u7CdbX_aeef8Xfvw/viewform?usp=publish-editor" class="ad-cta" style="display:inline-flex;text-decoration:none;">
+        Contact Us
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
